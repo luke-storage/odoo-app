@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
-import { AuthParamsInterface } from 'src/app/interface/auth.interface';
 import { finalize } from 'rxjs/operators';
+import { AuthParamsInterface } from 'src/app/interface/auth-params.interface';
 
 @Component({
   selector: 'app-login',
@@ -57,18 +57,19 @@ export class LoginComponent implements OnInit {
         loading.dismiss();
       })
     )
-    .subscribe(async (data:any)=>{
-      if(data.error){
+    .subscribe(
+      (data:any)=>{
+        this.navCtrl.navigateRoot("home", {state: data});
+      }, 
+      async ()=>{
         const alert = await this.alertCtrl.create({
           header: "Attenzione",
           message: "Credenziali errate o server non raggiungibile.",
           buttons: ["OK"]
         });
         await alert.present();
-      }else{
-        this.navCtrl.navigateRoot("home", {state: data});
       }
-    });
+    );
   }
 
   togglePasswordInputType():void{

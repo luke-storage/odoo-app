@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthInterface, AuthParamsInterface } from 'src/app/interface/auth.interface';
-import { catchError } from 'rxjs/operators';
-import { AlertController } from '@ionic/angular';
+import { AuthInterface } from 'src/app/interface/auth.interface';
+import { environment } from 'src/environments/environment';
+import { AuthParamsInterface } from 'src/app/interface/auth-params.interface';
+import { map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 @Injectable({
@@ -11,11 +12,8 @@ import { throwError } from 'rxjs';
 export class AuthService {
 
   constructor(
-    private httpClient: HttpClient,
-    private alertCtrl: AlertController
+    private httpClient: HttpClient
   ) { }
-
-  
 
   auth(params:AuthParamsInterface) {
     var data:AuthInterface = {
@@ -24,8 +22,16 @@ export class AuthService {
     }
 
     return this.httpClient.post(
-      "http://localhost:8080/http://localhost:8069/web/session/authenticate",
+      environment.url + "session/authenticate",
       data,
+    )
+    .pipe(
+      map((response:any)=>{
+        if(response.error){
+          throw new Error();
+        }else
+          return response;
+      })
     );
   }
 

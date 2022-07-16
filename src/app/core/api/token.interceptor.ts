@@ -14,22 +14,9 @@ export class TokenInterceptor implements HttpInterceptor {
     ) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-
-            var cloned = req.clone({
-                headers: cloned.headers.set('Content-Type', 'application/json')
-            });
-
-           /* cloned = cloned.clone({
-                headers: cloned.headers.set('Accept', 'application/json,application/pdf')
-            });
-
-            cloned = cloned.clone({
-                headers: cloned.headers.set('X-Time', new Date().toDateString())
-            });*/
-
-            return next.handle(cloned);
-     
-
+        var cloned = req.clone({
+            headers: cloned.headers.set('Content-Type', 'application/json')
+        });
+        return next.handle(cloned);
     }
 }

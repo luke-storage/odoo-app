@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  url: "https://ecocontrolgsm.odoo365.it/web/",
+  proxyUrl: "http://localhost:8080/"
 };
 
 /*

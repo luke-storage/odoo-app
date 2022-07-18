@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController, LoadingController, NavController } from '@ionic/angular';
-import { AuthService } from 'src/app/core/services/auth/auth.service';
-import { finalize } from 'rxjs/operators';
-import { AuthParamsInterface } from 'src/app/interface/auth-params.interface';
+import { LoadingController, NavController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
+import { OdooRPCService } from 'src/app/core/services/api-odoo/api-odoo.service';
+import { finalize, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,64 +16,57 @@ export class LoginComponent implements OnInit {
   public form: FormGroup;
   public passwordType: string = "password";
   public passwordIcon: string = "eye-outline";
+  private _unsubscribeAll: Subject<void> = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
-    private authService:AuthService,
-    private loadigCtrl:LoadingController,
-    private navCtrl:NavController,
-    private alertCtrl:AlertController
-  ) { 
+    private loadigCtrl: LoadingController,
+    private service: OdooRPCService,
+    private navCtrl: NavController,
+  ) { }
+
+  ngOnInit(): void {
     this.form = this.fb.group({
-      login:     ['', Validators.required],
+      login: ['', Validators.required],
       password: ['', Validators.required],
-      db:      ['', Validators.required]
+      db: ['', Validators.required],
+      url: ['', Validators.required]
     });
   }
 
-  ngOnInit():void {
-   
-  }
-
   ngOnDestroy(): void {
-
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 
-  async onSubmit(){
+  async onSubmit() {
     const loading = await this.loadigCtrl.create({
       message: "Accesso in corso..."
     });
     await loading.present();
 
-
-    var params:AuthParamsInterface = {
+    var params = {
       db: this.form.get('db').value,
       login: this.form.get('login').value,
-      password: this.form.get('password').value
+      password: this.form.get('password').value,
+      url: this.form.get('url').value
     }
 
-    this.authService.auth(params)
-    .pipe(
-      finalize(()=>{
-        loading.dismiss();
-      })
-    )
-    .subscribe(
-      (data:any)=>{
-        this.navCtrl.navigateRoot("home", {state: data});
-      }, 
-      async ()=>{
-        const alert = await this.alertCtrl.create({
-          header: "Attenzione",
-          message: "Credenziali errate o server non raggiungibile.",
-          buttons: ["OK"]
-        });
-        await alert.present();
-      }
-    );
+    this.service.init({ odoo_server: environment.url });
+    
+    this.service.login(params.db, params.login, params.password)
+      .pipe(
+        takeUntil(this._unsubscribeAll),
+        finalize(()=>{
+          loading.dismiss();
+        })
+      )
+      .subscribe((data) => {
+        this.navCtrl.navigateRoot("main/document-list");
+    });
   }
 
-  togglePasswordInputType():void{
+  togglePasswordInputType(): void {
     if (this.passwordType == "password") {
       this.passwordType = "text";
       this.passwordIcon = "eye-off-outline";

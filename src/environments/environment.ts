@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  url: "https://ecocontrolgsm.odoo365.it/web/",
+  url: "http://localhost:8080/http://localhost:8069",//"https://ecocontrolgsm.odoo365.it/web/",
   proxyUrl: "http://localhost:8080/"
 };
 

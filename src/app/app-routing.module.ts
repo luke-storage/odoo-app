@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './modules/main/home/home.component';
 
 const routes: Routes = [
   {  path: '', pathMatch: 'full', redirectTo: 'auth' },
@@ -8,8 +7,10 @@ const routes: Routes = [
     path: 'auth',
     loadChildren: () => import('./modules/auth/auth.module').then( m => m.AuthPageModule)
   },
-  { path: 'home', component: HomeComponent }
-
+  {
+    path: 'main',
+    loadChildren: () => import('./modules/main/main.module').then( m => m.MainPageModule)
+  }
 ];
 
 @NgModule({

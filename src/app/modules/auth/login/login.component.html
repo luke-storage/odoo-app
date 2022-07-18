@@ -31,6 +31,12 @@
           <ion-input formControlName="db"></ion-input>
         </ion-item>
 
+        <!--URL-->
+        <ion-item>
+          <ion-label position="floating">URL *</ion-label>
+          <ion-input formControlName="url"></ion-input>
+        </ion-item>
+
         <!--Submit-->
         <ion-button [disabled]="!form.valid" (click)="onSubmit()" expand="block">Login</ion-button>
 

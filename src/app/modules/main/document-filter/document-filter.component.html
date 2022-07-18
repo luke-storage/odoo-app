@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        Annulla
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Filtro</ion-title>
+    <ion-buttons slot="end">
+      
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item>
+    <ion-label>Stato</ion-label>
+    <ion-select placeholder="Seleziona" multiple (ionChange)="filter($event)">
+      <ion-select-option *ngFor="let state of states | keyvalue" [value]="state.value">{{state.key}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+</ion-content>

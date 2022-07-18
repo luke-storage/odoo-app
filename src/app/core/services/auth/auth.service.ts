@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { AuthInterface } from 'src/app/interface/auth.interface';
 import { environment } from 'src/environments/environment';
-import { AuthParamsInterface } from 'src/app/interface/auth-params.interface';
 import { map } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { OdooRPCService } from '../api-odoo/api-odoo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,27 +9,11 @@ import { throwError } from 'rxjs';
 export class AuthService {
 
   constructor(
-    private httpClient: HttpClient
+    private apiService:OdooRPCService
   ) { }
 
-  auth(params:AuthParamsInterface) {
-    var data:AuthInterface = {
-      jsonrpc: "2.0",
-      params: params
-    }
-
-    return this.httpClient.post(
-      environment.url + "session/authenticate",
-      data,
-    )
-    .pipe(
-      map((response:any)=>{
-        if(response.error){
-          throw new Error();
-        }else
-          return response;
-      })
-    );
+  auth(db:string, login:string, password:string) {
+    return this.apiService.login(db, login, password);
   }
 
 }
